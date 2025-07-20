@@ -198,3 +198,54 @@ html, body {
     font-size: 13px;
   }
 }
+
+/* Dark mode support */
+body.dark-mode {
+  background-color: #111827;
+  color: #f3f4f6;
+}
+
+body.dark-mode .chat-wrapper {
+  background: #1f2937;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .messages {
+  background: #1f2937;
+}
+
+body.dark-mode .msg {
+  background-color: #374151;
+  border-color: #4b5563;
+}
+
+body.dark-mode .msg.system {
+  background: #064e3b;
+  color: #d1fae5;
+}
+
+body.dark-mode .input-area textarea,
+body.dark-mode .input-area button,
+body.dark-mode input[type="text"] {
+  background-color: #1f2937;
+  color: #f3f4f6;
+  border-color: #4b5563;
+}
+
+body.dark-mode .input-area button {
+  background: #2563eb;
+}
+
+body.dark-mode .input-area button:hover {
+  background: #1d4ed8;
+}
+
+body.dark-mode .settings label,
+body.dark-mode .commands-list {
+  color: #ccc;
+}
+
+body.dark-mode .commands-list {
+  background: #111827;
+  border-top-color: #374151;
+}
