@@ -24,7 +24,7 @@ html, body {
   height: 100%;
 }
 
-/* Wiadomości u góry */
+/* Wiadomości */
 .messages {
   flex: 1;
   padding: 10px;
@@ -42,11 +42,7 @@ html, body {
   word-wrap: break-word;
 }
 
-.messages strong {
-  color: #1e40af;
-}
-
-/* Formularz na dole */
+/* Formularz */
 .input-area {
   padding: 10px;
   border-top: 1px solid #ddd;
@@ -62,6 +58,14 @@ html, body {
   border-radius: 6px;
   border: 1px solid #ccc;
   width: 100%;
+}
+
+#color {
+  width: 100%;
+  height: 40px;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 #message {
