@@ -8,16 +8,21 @@
 </head>
 <body>
   <div class="chat-wrapper">
-
-    <div id="messages" class="messages"></div>
-
-    <div class="input-area">
-      <input type="text" id="nick" placeholder="Twój nick" maxlength="20" />
-      <input type="color" id="color" value="#1e40af" />
-      <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
-      <button id="sendBtn">Wyślij</button>
+    <div class="login-area">
+      <input type="text" id="login-nick" placeholder="Twój nick" maxlength="20" />
+      <input type="password" id="login-password" placeholder="Hasło" maxlength="32" />
+      <button id="loginBtn">Zaloguj / Zarejestruj</button>
     </div>
 
+    <div id="chat" style="display:none;">
+      <div id="messages" class="messages"></div>
+
+      <div class="input-area">
+        <input type="color" id="color" value="#1e40af" />
+        <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
+        <button id="sendBtn">Wyślij</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
