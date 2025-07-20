@@ -9,6 +9,12 @@ const avatarInput = document.getElementById('avatar');
 
 let avatarDataUrl = null;
 
+// Motyw: wczytanie
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  document.body.classList.add('dark-mode');
+}
+
 // Obsługa avatara
 avatarInput.addEventListener('change', () => {
   const file = avatarInput.files[0];
@@ -92,6 +98,21 @@ async function sendMessage() {
   const text = messageInput.value.trim();
   if (!text) return;
 
+  // Komendy motywu
+  if (text === '/darkmode') {
+    document.body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark');
+    messageInput.value = '';
+    return;
+  }
+
+  if (text === '/lightmode') {
+    document.body.classList.remove('dark-mode');
+    localStorage.setItem('theme', 'light');
+    messageInput.value = '';
+    return;
+  }
+
   const nick = nickInput.value.trim() || 'Anonim';
   const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
@@ -116,6 +137,20 @@ async function sendMessage() {
     alert('Błąd wysyłania');
   }
 }
+
+// Automatyczna wiadomość co 10 minut
+setInterval(() => {
+  fetch(`${BACKEND_URL}/send`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: 'Dziękujemy że korzystasz z GlobalChat 💬',
+      nick: 'GLOBALCHATPL ✓',
+      color: 'gradient-green',
+      avatar: ''
+    })
+  });
+}, 600000); // 10 minut
 
 sendBtn.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', e => {
