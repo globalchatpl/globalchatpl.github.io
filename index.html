@@ -7,19 +7,17 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="chat-container">
-    <h1>🌍 Global Chat PL</h1>
+  <div class="chat-wrapper">
 
-    <input type="text" id="nick" placeholder="Twój nick" maxlength="20" />
-    <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
-    <button id="sendBtn">Wyślij</button>
+    <div id="messages" class="messages"></div>
 
-    <div id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="nick" placeholder="Twój nick" maxlength="20" />
+      <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
+      <button id="sendBtn">Wyślij</button>
+    </div>
+
   </div>
-
-  <footer>
-    <p>&copy; 2025 Global Chat PL</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>
