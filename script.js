@@ -1,105 +1,133 @@
-const BACKEND_URL = 'https://globalchatplbackend.onrender.com';
-
-const messagesEl = document.getElementById('messages');
+const messagesDiv = document.getElementById('messages');
+const sendBtn = document.getElementById('sendBtn');
 const messageInput = document.getElementById('message');
 const nickInput = document.getElementById('nick');
 const colorInput = document.getElementById('color');
 const avatarInput = document.getElementById('avatar');
-const sendBtn = document.getElementById('sendBtn');
 
-let lastSent = 0;
+let avatarDataUrl = null;
 
-sendBtn.onclick = sendMessage;
+avatarInput.addEventListener('change', () => {
+  const file = avatarInput.files[0];
+  if (!file) {
+    avatarDataUrl = null;
+    return;
+  }
 
-messageInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    avatarDataUrl = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function createMessageElement(msg) {
+  const div = document.createElement('div');
+  div.classList.add('msg');
+
+  if (msg.isOwner) {
+    div.classList.add('owner');
+  }
+
+  if (msg.nick === 'GLOBALCHATPL ✓') {
+    div.classList.add('globalchat');
+  }
+
+  // Avatar
+  if (msg.avatar) {
+    const img = document.createElement('img');
+    img.src = msg.avatar;
+    img.alt = "Avatar";
+    div.appendChild(img);
+  }
+
+  // Nick
+  const nickSpan = document.createElement('span');
+  nickSpan.classList.add('nick');
+  nickSpan.textContent = msg.nick + ": ";
+  nickSpan.style.color = msg.color || '#1e40af';
+
+  // If color is a gradient class name (like gradient-green), override color style:
+  if (msg.color === 'gradient-green') {
+    nickSpan.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
+    nickSpan.style.webkitBackgroundClip = 'text';
+    nickSpan.style.webkitTextFillColor = 'transparent';
+    nickSpan.style.color = 'initial';
+  }
+  else if (msg.color === 'gradient-yellow-red') {
+    nickSpan.style.background = 'linear-gradient(90deg, #dc2626, #facc15)';
+    nickSpan.style.webkitBackgroundClip = 'text';
+    nickSpan.style.webkitTextFillColor = 'transparent';
+    nickSpan.style.color = 'initial';
+  }
+
+  div.appendChild(nickSpan);
+
+  // Text
+  const textSpan = document.createElement('span');
+  textSpan.classList.add('text');
+  textSpan.textContent = msg.text;
+  div.appendChild(textSpan);
+
+  return div;
+}
+
+async function fetchMessages() {
+  try {
+    const res = await fetch('/messages');
+    const data = await res.json();
+
+    messagesDiv.innerHTML = '';
+    data.forEach(msg => {
+      const el = createMessageElement(msg);
+      messagesDiv.appendChild(el);
+    });
+
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  } catch (err) {
+    console.error('Błąd podczas pobierania wiadomości:', err);
+  }
+}
+
+async function sendMessage() {
+  const text = messageInput.value.trim();
+  if (!text) return;
+
+  const nick = nickInput.value.trim() || 'Anonim';
+  const color = colorInput.value;
+  const avatar = avatarDataUrl;
+
+  try {
+    const res = await fetch('/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, nick, color, avatar }),
+    });
+
+    const data = await res.json();
+    if (data.error) {
+      alert('Błąd: ' + data.error);
+    } else {
+      messageInput.value = '';
+      avatarInput.value = '';
+      avatarDataUrl = null;
+      fetchMessages();
+    }
+  } catch (err) {
+    alert('Błąd wysyłania wiadomości');
+  }
+}
+
+sendBtn.addEventListener('click', () => {
+  sendMessage();
+});
+
+messageInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     sendMessage();
   }
 });
 
-function sendMessage() {
-  const text = messageInput.value.trim();
-  if (!text) return;
-
-  const now = Date.now();
-  if (now - lastSent < 3000) {
-    alert("Poczekaj 3 sekundy przed kolejną wiadomością.");
-    return;
-  }
-
-  const reader = new FileReader();
-  const file = avatarInput.files[0];
-
-  reader.onloadend = () => {
-    const msg = {
-      text,
-      nick: nickInput.value.trim() || "Anonim",
-      color: colorInput.value,
-      avatar: reader.result || null
-    };
-
-    fetch(`${BACKEND_URL}/send`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(msg)
-    });
-
-    messageInput.value = "";
-    lastSent = now;
-  };
-
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    reader.onloadend();
-  }
-}
-
-function fetchMessages() {
-  fetch(`${BACKEND_URL}/messages`)
-    .then(res => res.json())
-    .then(data => {
-      messagesEl.innerHTML = data.map(msg => {
-        let classes = '';
-        let displayNick = escapeHtml(msg.nick);
-
-        if (msg.isOwner) {
-          // właściciel — czerwono-żółty gradient + ✓ + pogrubienie
-          classes = 'owner-gradient bold';
-          if (!displayNick.includes('✓')) displayNick += ' ✓';
-        } else if (msg.color === 'gradient-green') {
-          // /say i GLOBALCHATPL — zielony gradient + ✓ + pogrubienie
-          classes = 'green-gradient bold';
-          if (!displayNick.includes('✓')) displayNick += ' ✓';
-        } else if (/^GLOBALCHATPL/.test(msg.nick)) {
-          // systemowe / ban — zielony gradient + ✓ + pogrubienie
-          classes = 'green-gradient bold';
-          if (!displayNick.includes('✓')) displayNick += ' ✓';
-        } else {
-          // zwykły nick kolor z serwera
-          classes = '';
-        }
-
-        return `
-          <div class="msg">
-            ${msg.avatar ? `<img src="${msg.avatar}" alt="avatar">` : `<img src="https://via.placeholder.com/40" alt="anonim">`}
-            <div>
-              <span class="${classes}" style="${classes === '' ? `color:${msg.color}` : ''}">${displayNick}:</span>
-              <div>${escapeHtml(msg.text)}</div>
-            </div>
-          </div>
-        `;
-      }).join("");
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    });
-}
-
-setInterval(fetchMessages, 2000);
 fetchMessages();
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
+setInterval(fetchMessages, 3000);
