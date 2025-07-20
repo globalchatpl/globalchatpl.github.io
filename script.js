@@ -96,8 +96,6 @@ async function sendMessage() {
   const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
 
-  console.log('Wysyłam:', { text, nick, color, avatar });
-
   try {
     const res = await fetch(`${BACKEND_URL}/send`, {
       method: 'POST',
@@ -107,7 +105,6 @@ async function sendMessage() {
     const data = await res.json();
     if (data.error) {
       alert('Błąd: ' + data.error);
-      console.error(data.error);
     } else {
       messageInput.value = '';
       avatarInput.value = '';
