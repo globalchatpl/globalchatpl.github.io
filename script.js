@@ -1,3 +1,5 @@
+const BACKEND_URL = 'https://globalchatplbackend.onrender.com';
+
 const messagesEl = document.getElementById('messages');
 const messageInput = document.getElementById('message');
 const nickInput = document.getElementById('nick');
@@ -6,7 +8,6 @@ const avatarInput = document.getElementById('avatar');
 const sendBtn = document.getElementById('sendBtn');
 
 let lastSent = 0;
-let messages = [];
 
 sendBtn.onclick = sendMessage;
 
@@ -37,8 +38,13 @@ function sendMessage() {
       color: colorInput.value,
       avatar: reader.result || null
     };
-    messages.push(msg);
-    renderMessages();
+
+    fetch(`${BACKEND_URL}/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(msg)
+    });
+
     messageInput.value = "";
     lastSent = now;
   };
@@ -50,18 +56,25 @@ function sendMessage() {
   }
 }
 
-function renderMessages() {
-  messagesEl.innerHTML = messages.map(msg => `
-    <div class="msg">
-      ${msg.avatar ? `<img src="${msg.avatar}" alt="avatar">` : `<img src="https://via.placeholder.com/40" alt="anonim">`}
-      <div>
-        <span style="color: ${msg.color}">${escapeHtml(msg.nick)}:</span>
-        <div>${escapeHtml(msg.text)}</div>
-      </div>
-    </div>
-  `).join("");
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+function fetchMessages() {
+  fetch(`${BACKEND_URL}/messages`)
+    .then(res => res.json())
+    .then(data => {
+      messagesEl.innerHTML = data.map(msg => `
+        <div class="msg">
+          ${msg.avatar ? `<img src="${msg.avatar}" alt="avatar">` : `<img src="https://via.placeholder.com/40" alt="anonim">`}
+          <div>
+            <span style="color: ${msg.color}">${escapeHtml(msg.nick)}:</span>
+            <div>${escapeHtml(msg.text)}</div>
+          </div>
+        </div>
+      `).join("");
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    });
 }
+
+setInterval(fetchMessages, 2000);
+fetchMessages();
 
 function escapeHtml(text) {
   const div = document.createElement("div");
