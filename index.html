@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Global Chat</title>
+  <title>Global Chat PL</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="chat-container">
-    <h1>🌐 Global Chat PL 🌐</h1>
+    <h1>🌍 Global Chat PL</h1>
 
-    <input type="text" id="nick" placeholder="Twój nick" />
-    <textarea id="message" placeholder="Wpisz wiadomość..."></textarea>
+    <input type="text" id="nick" placeholder="Twój nick" maxlength="20" />
+    <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
     <button id="sendBtn">Wyślij</button>
 
     <div id="messages"></div>
   </div>
+
+  <footer>
+    <p>&copy; 2025 Global Chat PL</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
