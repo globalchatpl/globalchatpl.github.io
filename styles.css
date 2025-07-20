@@ -47,23 +47,7 @@ html, body {
 }
 
 .msg span {
-  font-weight: bold;
-}
-
-/* Gradienty dla właściciela i /say */
-
-.gold-gradient {
-  background: linear-gradient(90deg, #b59f00, #d4af37);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-}
-
-.green-gradient {
-  background: linear-gradient(90deg, #064e03, #32cd32);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .form-section {
@@ -107,4 +91,24 @@ html, body {
 .settings input[type="file"] {
   padding: 6px;
   font-size: 14px;
+}
+
+/* Nowe klasy */
+
+.bold {
+  font-weight: 700;
+}
+
+.green-gradient {
+  background: linear-gradient(90deg, #064e3b, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.owner-gradient {
+  background: linear-gradient(90deg, #b45309, #fde68a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
 }
