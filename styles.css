@@ -8,17 +8,19 @@ html, body {
   height: 100%;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f3f4f6;
+  color: #111;
 }
 
 .chat-wrapper {
   max-width: 600px;
+  height: 100vh;
   margin: auto;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: white;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
 .messages {
@@ -28,17 +30,17 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #e5e7eb;
+  scroll-behavior: smooth;
 }
 
 .msg {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
+  background: #e5e7eb;
   padding: 8px;
   border-radius: 8px;
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+  word-break: break-word;
 }
 
 .msg img {
@@ -46,82 +48,79 @@ html, body {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-.msg span.nick {
-  font-weight: normal;
-  user-select: none;
+.msg span {
+  font-weight: bold;
 }
 
-.msg span.text {
-  white-space: pre-wrap;
-  flex: 1;
-  word-wrap: break-word;
-}
-
-/* Pogubione i gradienty */
-
-.msg.owner span.nick,
-.msg.globalchat span.nick {
-  font-weight: 700;
-}
-
-/* Owner: gradient czerwono-żółty */
-.owner span.nick {
-  background: linear-gradient(90deg, #dc2626, #facc15);
+.msg .nick-owner {
+  font-weight: bold;
+  background: linear-gradient(90deg, #d97706, #fbbf24);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* GLOBALCHATPL: gradient zielony */
-.globalchat span.nick {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
+.msg .nick-globalchatpl {
+  font-weight: bold;
+  background: linear-gradient(90deg, #166534, #4ade80);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Gradient CSS klasy kolorów do ewentualnego użytku */
-.gradient-green {
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.msg .nick-globalchatpl::after {
+  content: " ✓";
+  color: #4ade80;
+  font-weight: bold;
 }
 
-.gradient-yellow-red {
-  background: linear-gradient(90deg, #dc2626, #facc15);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.msg .nick-owner::after {
+  content: " ✓";
+  color: #fbbf24;
+  font-weight: bold;
+}
+
+.msg .system-msg {
+  background: linear-gradient(90deg, #166534, #4ade80);
+  color: white;
+  font-weight: 600;
 }
 
 .form-section {
   padding: 10px;
   border-top: 1px solid #ddd;
   background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .input-area {
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  margin-bottom: 12px;
 }
 
 .input-area textarea {
+  flex: 1;
   min-height: 60px;
   resize: vertical;
   padding: 8px;
   font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
 }
 
 .input-area button {
-  padding: 10px;
+  width: 50px;
   background: #3b82f6;
   color: white;
   border: none;
+  border-radius: 6px;
+  font-size: 20px;
   cursor: pointer;
-  font-size: 18px;
-  border-radius: 4px;
-  align-self: flex-end;
+  transition: background-color 0.3s ease;
 }
 
 .input-area button:hover {
@@ -130,40 +129,61 @@ html, body {
 
 .settings {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
   align-items: center;
 }
 
 .settings label {
+  font-size: 14px;
   font-weight: 600;
+  min-width: 80px;
 }
 
 .settings input[type="text"],
 .settings input[type="color"],
 .settings input[type="file"] {
-  padding: 4px 6px;
+  padding: 6px;
+  font-size: 14px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-family: inherit;
 }
 
 .commands-list {
-  border-top: 1px solid #ddd;
-  padding: 10px;
-  background: #fef3c7;
-}
-
-.commands-list h3 {
-  margin-bottom: 8px;
-  font-weight: 700;
-  color: #b45309;
-}
-
-.commands-list ul {
-  list-style-type: none;
-}
-
-.commands-list li {
-  margin-bottom: 4px;
+  margin-top: 10px;
   font-size: 14px;
+  background: #f3f4f6;
+  padding: 8px;
+  border-radius: 6px;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .chat-wrapper {
+    max-width: 100vw;
+    height: 100vh;
+    border: none;
+    border-radius: 0;
+  }
+
+  .settings {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .settings label {
+    min-width: auto;
+  }
+
+  .input-area {
+    flex-direction: column;
+  }
+
+  .input-area button {
+    width: 100%;
+  }
 }
