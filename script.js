@@ -113,13 +113,20 @@ async function sendMessage() {
     return;
   }
 
-  let nick = nickInput.value.trim() || 'Anonim';
+  const nick = nickInput.value.trim() || 'Anonim';
   const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
 
   // Blokada zastrzeżonego nicku
-  if (nick.toUpperCase().includes('GLOBALCHATPL ✓')) {
+  if (nick.toUpperCase().includes('GLOBALCHATPL')) {
     alert('Nie możesz używać zastrzeżonego nicku GLOBALCHATPL ✓');
+    return;
+  }
+
+  // Blokada obraźliwej/zbanowanej frazy
+  const bannedPhrase = 'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3';
+  if (text.toLowerCase().includes(bannedPhrase)) {
+    alert('Treść wiadomości zawiera zakazaną frazę.');
     return;
   }
 
