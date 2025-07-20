@@ -1,3 +1,5 @@
+const BACKEND_URL = 'https://globalchatplbackend.onrender.com';
+
 const messagesDiv = document.getElementById('messages');
 const sendBtn = document.getElementById('sendBtn');
 const messageInput = document.getElementById('message');
