@@ -1,4 +1,4 @@
-const apiUrl = 'https://twoj-backend.onrender.com/messages'; // ← Zmień na swój backend!
+const apiUrl = 'https://globalchatplbackend.onrender.com'; // ← Zmień na swój backend!
 let lastSentTime = 0;
 
 const nickInput = document.getElementById('nick');
