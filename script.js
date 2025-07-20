@@ -3,6 +3,7 @@ const apiUrl = 'https://globalchatplbackend.onrender.com/messages';
 let lastSentTime = 0;
 
 const nickInput = document.getElementById('nick');
+const colorInput = document.getElementById('color');
 const messageInput = document.getElementById('message');
 const sendBtn = document.getElementById('sendBtn');
 const messagesDiv = document.getElementById('messages');
@@ -10,6 +11,7 @@ const messagesDiv = document.getElementById('messages');
 sendBtn.onclick = async () => {
   const nick = nickInput.value.trim();
   const text = messageInput.value.trim();
+  const color = colorInput.value;
 
   if (!nick || !text) {
     alert('Wpisz nick i wiadomość!');
@@ -26,7 +28,7 @@ sendBtn.onclick = async () => {
     await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nick, text })
+      body: JSON.stringify({ nick, text, color })
     });
 
     messageInput.value = '';
@@ -43,7 +45,7 @@ async function loadMessages() {
     const res = await fetch(apiUrl);
     const data = await res.json();
     messagesDiv.innerHTML = data.map(msg =>
-      `<p><strong>${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
+      `<p><strong style="color: ${escapeHtml(msg.color || '#1e40af')}">${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
     ).join('');
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (err) {
