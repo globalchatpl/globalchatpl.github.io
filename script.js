@@ -1,79 +1,83 @@
-const messagesEl = document.getElementById('messages');
-const messageInput = document.getElementById('message');
+const chat = document.getElementById('chat');
 const nickInput = document.getElementById('nick');
 const colorInput = document.getElementById('color');
 const avatarInput = document.getElementById('avatar');
+const messageInput = document.getElementById('message');
 const sendBtn = document.getElementById('sendBtn');
 
-const SERVER = 'https://globalchatplbackend.onrender.com';
+const API_URL = 'https://globalchatplbackend.onrender.com'; // podmień na swój backend
 
-async function loadMessages() {
-  const res = await fetch(`${SERVER}/messages`);
-  const data = await res.json();
-  renderMessages(data);
+function addMessageToChat({ nick, text, color, avatar }) {
+  const div = document.createElement('div');
+  div.classList.add('message');
+
+  const avatarEl = document.createElement('img');
+  avatarEl.classList.add('avatar');
+  avatarEl.src = avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  avatarEl.alt = 'avatar';
+
+  const nickEl = document.createElement('span');
+  nickEl.classList.add('nick');
+  nickEl.style.color = color || '#1e40af';
+  nickEl.textContent = nick || 'Anonim';
+
+  const textEl = document.createElement('span');
+  textEl.classList.add('text');
+  textEl.textContent = text;
+
+  div.appendChild(avatarEl);
+  div.appendChild(nickEl);
+  div.appendChild(textEl);
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function fetchMessages() {
+  try {
+    const res = await fetch(`${API_URL}/messages`);
+    if (!res.ok) throw new Error('Błąd pobierania wiadomości');
+    const data = await res.json();
+    chat.innerHTML = '';
+    data.forEach(addMessageToChat);
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function sendMessage() {
   const text = messageInput.value.trim();
-  if (!text) return;
+  if (!text) return alert('Wpisz wiadomość');
 
-  const file = avatarInput.files[0];
-  let avatarData = null;
+  const nick = nickInput.value.trim() || 'Anonim';
+  const color = colorInput.value || '#1e40af';
+  const avatar = avatarInput.value.trim() || null;
 
-  if (file) {
-    avatarData = await toBase64(file);
+  try {
+    const res = await fetch(`${API_URL}/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, nick, color, avatar }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Błąd wysyłania wiadomości');
+
+    messageInput.value = '';
+    fetchMessages();
+  } catch (err) {
+    alert(err.message);
   }
-
-  const payload = {
-    text,
-    nick: nickInput.value.trim() || "Anonim",
-    color: colorInput.value,
-    avatar: avatarData,
-  };
-
-  const res = await fetch(`${SERVER}/send`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (res.ok) {
-    messageInput.value = "";
-    await loadMessages();
-  } else {
-    const err = await res.json();
-    alert(err.error || "Błąd wysyłania wiadomości.");
-  }
-}
-
-function renderMessages(messages) {
-  messagesEl.innerHTML = messages.map(msg => `
-    <div class="msg">
-      ${msg.avatar ? `<img src="${msg.avatar}" alt="avatar">` : `<img src="https://via.placeholder.com/40" alt="anonim">`}
-      <div>
-        <span style="color: ${msg.color}">${escapeHtml(msg.nick)}:</span>
-        <div>${escapeHtml(msg.text)}</div>
-      </div>
-    </div>
-  `).join("");
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function toBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 }
 
 sendBtn.onclick = sendMessage;
-setInterval(loadMessages, 3000);
-loadMessages();
+
+messageInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Odświeżaj co 2 sekundy
+setInterval(fetchMessages, 2000);
+fetchMessages();
