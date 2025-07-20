@@ -7,98 +7,88 @@
 html, body {
   height: 100%;
   font-family: 'Segoe UI', sans-serif;
-  background: #e5e7eb;
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  max-width: 600px;
-  margin: auto;
-  background: #fff;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-  height: 100%;
-}
-
-.login-area {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   background: #f3f4f6;
 }
 
-.login-area input, .input-area textarea {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.login-area button {
-  padding: 12px;
-  background: #3b82f6;
-  color: white;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.chat-wrapper {
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
 }
 
 .messages {
   flex: 1;
-  padding: 10px;
   overflow-y: auto;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.messages p {
-  padding: 6px 10px;
-  background: #f1f5f9;
+.msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e5e7eb;
+  padding: 8px;
   border-radius: 8px;
-  max-width: 100%;
-  word-wrap: break-word;
 }
 
-.input-area {
+.msg img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.msg span {
+  font-weight: bold;
+}
+
+.form-section {
   padding: 10px;
   border-top: 1px solid #ddd;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   background: #f9fafb;
 }
 
-#color {
-  width: 100%;
-  height: 40px;
-  border: none;
-  background: none;
-  cursor: pointer;
+.input-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-#message {
-  resize: vertical;
+.input-area textarea {
   min-height: 60px;
+  resize: vertical;
+  padding: 8px;
+  font-size: 16px;
 }
 
-#sendBtn {
-  padding: 12px;
-  font-size: 16px;
+.input-area button {
+  padding: 10px;
   background: #3b82f6;
   color: white;
   border: none;
   border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-#sendBtn:hover {
-  background: #2563eb;
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings input[type="text"],
+.settings input[type="color"],
+.settings input[type="file"] {
+  padding: 6px;
+  font-size: 14px;
 }
