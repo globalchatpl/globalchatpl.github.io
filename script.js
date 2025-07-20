@@ -124,7 +124,10 @@ async function sendMessage() {
   }
 
   // Blokada obraźliwej/zbanowanej frazy
-  const bannedPhrase = 'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3';
+  const bannedPhrase = [
+'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3',
+'jest tu ktoś z jpg?',
+];
   if (text.toLowerCase().includes(bannedPhrase)) {
     alert('Treść wiadomości zawiera zakazaną frazę.');
     return;
