@@ -6,7 +6,7 @@
 
 html, body {
   height: 100%;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f3f4f6;
 }
 
@@ -15,7 +15,7 @@ html, body {
   margin: auto;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   background: white;
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
@@ -28,15 +28,17 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background: #e5e7eb;
 }
 
 .msg {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #e5e7eb;
+  background: #fff;
   padding: 8px;
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
 }
 
 .msg img {
@@ -46,8 +48,49 @@ html, body {
   object-fit: cover;
 }
 
-.msg span {
+.msg span.nick {
   font-weight: normal;
+  user-select: none;
+}
+
+.msg span.text {
+  white-space: pre-wrap;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+/* Pogubione i gradienty */
+
+.msg.owner span.nick,
+.msg.globalchat span.nick {
+  font-weight: 700;
+}
+
+/* Owner: gradient czerwono-żółty */
+.owner span.nick {
+  background: linear-gradient(90deg, #dc2626, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* GLOBALCHATPL: gradient zielony */
+.globalchat span.nick {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Gradient CSS klasy kolorów do ewentualnego użytku */
+.gradient-green {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-yellow-red {
+  background: linear-gradient(90deg, #dc2626, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .form-section {
@@ -75,40 +118,52 @@ html, body {
   background: #3b82f6;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
+  font-size: 18px;
+  border-radius: 4px;
+  align-self: flex-end;
+}
+
+.input-area button:hover {
+  background: #2563eb;
 }
 
 .settings {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.settings label {
+  font-weight: 600;
 }
 
 .settings input[type="text"],
 .settings input[type="color"],
 .settings input[type="file"] {
-  padding: 6px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.commands-list {
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  background: #fef3c7;
+}
+
+.commands-list h3 {
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #b45309;
+}
+
+.commands-list ul {
+  list-style-type: none;
+}
+
+.commands-list li {
+  margin-bottom: 4px;
   font-size: 14px;
-}
-
-/* Nowe klasy */
-
-.bold {
-  font-weight: 700;
-}
-
-.green-gradient {
-  background: linear-gradient(90deg, #064e3b, #22c55e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
-}
-
-.owner-gradient {
-  background: linear-gradient(90deg, #b45309, #fde68a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
 }
