@@ -22,26 +22,6 @@ function sendMessage() {
   const text = messageInput.value.trim();
   if (!text) return;
 
-  // Obsługa komend /ban, /owner, /say - wysyłamy jako POST, ale bez pokazywania komendy w chacie
-  const banCmd = text.match(/^\/ban\s+[0-9.:]+\s+\S+/i);
-  const ownerCmd = text.match(/^\/owner\s+\S+/i);
-  const sayCmd = text.match(/^\/say\s+\S+\s+.+/i);
-
-  if (banCmd || ownerCmd || sayCmd) {
-    fetch(`${BACKEND_URL}/send`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text, nick: nickInput.value.trim() || "Anonim" })
-    }).then(res => {
-      if (!res.ok) return res.json().then(data => alert(data.error || 'Błąd'));
-    });
-
-    messageInput.value = "";
-    return; // nie wysyłamy dalej
-  }
-
-  // Zwykła wiadomość
-
   const now = Date.now();
   if (now - lastSent < 3000) {
     alert("Poczekaj 3 sekundy przed kolejną wiadomością.");
@@ -81,26 +61,31 @@ function fetchMessages() {
     .then(res => res.json())
     .then(data => {
       messagesEl.innerHTML = data.map(msg => {
-        // Kolory i znaczek właściciela
-        let nickColor = msg.color || '#1e40af';
+        let classes = '';
         let displayNick = escapeHtml(msg.nick);
 
-        // Jeśli to właściciel
         if (msg.isOwner) {
-          // złoty gradient i znaczek ✓
-          nickColor = 'gold-gradient';
-          displayNick += ' ✓';
+          // właściciel — czerwono-żółty gradient + ✓ + pogrubienie
+          classes = 'owner-gradient bold';
+          if (!displayNick.includes('✓')) displayNick += ' ✓';
         } else if (msg.color === 'gradient-green') {
-          // wiadomości /say mają zielony gradient i znaczek ✓
-          nickColor = 'green-gradient';
-          displayNick += ' ✓';
+          // /say i GLOBALCHATPL — zielony gradient + ✓ + pogrubienie
+          classes = 'green-gradient bold';
+          if (!displayNick.includes('✓')) displayNick += ' ✓';
+        } else if (/^GLOBALCHATPL/.test(msg.nick)) {
+          // systemowe / ban — zielony gradient + ✓ + pogrubienie
+          classes = 'green-gradient bold';
+          if (!displayNick.includes('✓')) displayNick += ' ✓';
+        } else {
+          // zwykły nick kolor z serwera
+          classes = '';
         }
 
         return `
           <div class="msg">
             ${msg.avatar ? `<img src="${msg.avatar}" alt="avatar">` : `<img src="https://via.placeholder.com/40" alt="anonim">`}
             <div>
-              <span class="${nickColor}">${displayNick}:</span>
+              <span class="${classes}" style="${classes === '' ? `color:${msg.color}` : ''}">${displayNick}:</span>
               <div>${escapeHtml(msg.text)}</div>
             </div>
           </div>
