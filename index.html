@@ -23,15 +23,6 @@
       return false;
     });
 
-    setInterval(function () {
-      const devtools = window.outerWidth - window.innerWidth > 100 || window.outerHeight - window.innerHeight > 100;
-      if (devtools) {
-        document.body.innerHTML = '';
-        alert("🚫 DevTools są zablokowane!");
-        window.location.reload();
-      }
-    }, 1000);
-
     Object.defineProperty(console, "_commandLineAPI", {
       get: function () {
         throw new Error("🚫 Konsola zablokowana");
