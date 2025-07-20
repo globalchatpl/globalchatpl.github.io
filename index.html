@@ -1,36 +1,28 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Global Chat PL</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Global Chat PL</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="chat-wrapper">
 
-    <div id="messages" class="messages"></div>
+<div id="chat"></div>
 
-    <div class="form-section">
-      <div class="input-area">
-        <textarea id="message" placeholder="Wpisz wiadomość..." maxlength="200"></textarea>
-        <button id="sendBtn">Wyślij</button>
-      </div>
-
-      <div class="settings">
-        <label>Nick:</label>
-        <input type="text" id="nick" maxlength="20" placeholder="Anonim" />
-        
-        <label>Kolor nicku:</label>
-        <input type="color" id="color" value="#1e40af" />
-
-        <label>Profilowe:</label>
-        <input type="file" id="avatar" accept="image/*" />
-      </div>
-    </div>
-
+<div id="inputArea">
+  <div id="settings">
+    <input id="nick" type="text" placeholder="Nick" maxlength="20" />
+    <input id="color" type="color" value="#1e40af" title="Kolor nicku" />
+    <input id="avatar" type="url" placeholder="Link do avataru (opcjonalnie)" />
   </div>
 
-  <script src="script.js"></script>
+  <div id="messageRow">
+    <input id="message" type="text" placeholder="Napisz wiadomość..." maxlength="200" />
+    <button id="sendBtn" title="Wyślij wiadomość">➤</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
