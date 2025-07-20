@@ -24,7 +24,31 @@ html, body {
   height: 100%;
 }
 
-/* Wiadomości */
+.login-area {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f3f4f6;
+}
+
+.login-area input, .input-area textarea {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.login-area button {
+  padding: 12px;
+  background: #3b82f6;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 .messages {
   flex: 1;
   padding: 10px;
@@ -42,7 +66,6 @@ html, body {
   word-wrap: break-word;
 }
 
-/* Formularz */
 .input-area {
   padding: 10px;
   border-top: 1px solid #ddd;
@@ -50,14 +73,6 @@ html, body {
   flex-direction: column;
   gap: 8px;
   background: #f9fafb;
-}
-
-#nick, #message {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
 }
 
 #color {
