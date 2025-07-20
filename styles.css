@@ -44,11 +44,11 @@ html, body {
 }
 
 .msg.system {
-  background: #d1fae5; /* zielony pastelowy dla systemowych */
+  background: #d1fae5;
   font-style: italic;
 }
 
-.msg .avatar {
+.avatar {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -57,16 +57,16 @@ html, body {
   border: 2px solid transparent;
 }
 
-.msg .owner-avatar {
-  border-color: #f59e0b; /* złoty obrys avatar właściciela */
+.owner-avatar {
+  border-color: #f59e0b;
 }
 
-.msg .content {
+.content {
   flex: 1;
   word-break: break-word;
 }
 
-.msg .nick {
+.nick {
   font-weight: bold;
   margin-bottom: 4px;
   display: flex;
@@ -74,26 +74,23 @@ html, body {
   gap: 6px;
 }
 
-.msg .nick.owner {
+.nick.owner {
   background: linear-gradient(90deg, #f87171, #fbbf24);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 900;
-  position: relative;
 }
 
-.msg .nick.globalchatpl {
-  font-weight: 900;
+.nick.global {
   background: linear-gradient(90deg, #34d399, #10b981);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.msg .nick .checkmark {
+.checkmark {
   color: #10b981;
   font-weight: 900;
   font-size: 1.1em;
-  user-select: none;
 }
 
 .form-section {
@@ -134,7 +131,6 @@ html, body {
   padding: 0 16px;
   cursor: pointer;
   transition: background-color 0.3s;
-  flex-shrink: 0;
 }
 
 .input-area button:hover {
@@ -152,7 +148,6 @@ html, body {
 
 .settings label {
   flex-shrink: 0;
-  user-select: none;
 }
 
 .settings input[type="text"] {
@@ -172,9 +167,7 @@ html, body {
   width: 40px;
   height: 32px;
   border: none;
-  padding: 0;
   cursor: pointer;
-  background: none;
 }
 
 .settings input[type="file"] {
@@ -187,7 +180,6 @@ html, body {
   font-size: 14px;
   color: #666;
   border-top: 1px solid #ddd;
-  user-select: none;
   max-height: 80px;
   overflow-y: auto;
   line-height: 1.4;
@@ -204,9 +196,5 @@ html, body {
   }
   .settings {
     font-size: 13px;
-    gap: 10px 12px;
-  }
-  .settings input[type="text"] {
-    width: 90px;
   }
 }
