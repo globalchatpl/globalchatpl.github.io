@@ -1,3 +1,5 @@
+const BACKEND_URL = 'https://globalchatplbackend.onrender.com';
+
 const messagesDiv = document.getElementById('messages');
 const sendBtn = document.getElementById('sendBtn');
 const messageInput = document.getElementById('message');
@@ -25,42 +27,33 @@ function createMessageElement(msg) {
   const div = document.createElement('div');
   div.classList.add('msg');
 
-  if (msg.isOwner) {
-    div.classList.add('owner');
-  }
-
-  if (msg.nick === 'GLOBALCHATPL ✓') {
-    div.classList.add('globalchat');
-  }
+  if (msg.isOwner) div.classList.add('owner');
+  if (msg.nick === 'GLOBALCHATPL ✓') div.classList.add('globalchat');
 
   // Avatar
-  if (msg.avatar) {
-    const img = document.createElement('img');
-    img.src = msg.avatar;
-    img.alt = "Avatar";
-    div.appendChild(img);
-  }
+  const img = document.createElement('img');
+  img.src = msg.avatar || 'https://i.imgur.com/xaJxH9d.png'; // avatar defaultowy
+  img.alt = "Avatar";
+  div.appendChild(img);
 
   // Nick
   const nickSpan = document.createElement('span');
   nickSpan.classList.add('nick');
   nickSpan.textContent = msg.nick + ": ";
-  nickSpan.style.color = msg.color || '#1e40af';
 
-  // If color is a gradient class name (like gradient-green), override color style:
   if (msg.color === 'gradient-green') {
     nickSpan.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
     nickSpan.style.webkitBackgroundClip = 'text';
     nickSpan.style.webkitTextFillColor = 'transparent';
-    nickSpan.style.color = 'initial';
-  }
-  else if (msg.color === 'gradient-yellow-red') {
+  } else if (msg.color === 'gradient-yellow-red') {
     nickSpan.style.background = 'linear-gradient(90deg, #dc2626, #facc15)';
     nickSpan.style.webkitBackgroundClip = 'text';
     nickSpan.style.webkitTextFillColor = 'transparent';
-    nickSpan.style.color = 'initial';
+  } else {
+    nickSpan.style.color = msg.color || '#1e40af';
   }
 
+  nickSpan.style.fontWeight = (msg.isOwner || msg.nick === 'GLOBALCHATPL ✓') ? 'bold' : 'normal';
   div.appendChild(nickSpan);
 
   // Text
@@ -74,7 +67,7 @@ function createMessageElement(msg) {
 
 async function fetchMessages() {
   try {
-    const res = await fetch('/messages');
+    const res = await fetch(`${BACKEND_URL}/messages`);
     const data = await res.json();
 
     messagesDiv.innerHTML = '';
@@ -98,7 +91,7 @@ async function sendMessage() {
   const avatar = avatarDataUrl;
 
   try {
-    const res = await fetch('/send', {
+    const res = await fetch(`${BACKEND_URL}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, nick, color, avatar }),
@@ -118,10 +111,7 @@ async function sendMessage() {
   }
 }
 
-sendBtn.addEventListener('click', () => {
-  sendMessage();
-});
-
+sendBtn.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
