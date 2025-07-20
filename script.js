@@ -113,9 +113,15 @@ async function sendMessage() {
     return;
   }
 
-  const nick = nickInput.value.trim() || 'Anonim';
+  let nick = nickInput.value.trim() || 'Anonim';
   const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
+
+  // Blokada zastrzeżonego nicku
+  if (nick.toUpperCase().includes('GLOBALCHATPL')) {
+    alert('Nie możesz używać zastrzeżonego nicku GLOBALCHATPL ✓');
+    return;
+  }
 
   try {
     const res = await fetch(`${BACKEND_URL}/send`, {
