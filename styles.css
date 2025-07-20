@@ -50,6 +50,22 @@ html, body {
   font-weight: bold;
 }
 
+/* Gradienty dla właściciela i /say */
+
+.gold-gradient {
+  background: linear-gradient(90deg, #b59f00, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.green-gradient {
+  background: linear-gradient(90deg, #064e03, #32cd32);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
 .form-section {
   padding: 10px;
   border-top: 1px solid #ddd;
