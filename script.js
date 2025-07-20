@@ -45,6 +45,7 @@ async function loadMessages() {
     messagesDiv.innerHTML = data.map(msg =>
       `<p><strong>${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
     ).join('');
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (err) {
     console.error('Błąd przy pobieraniu wiadomości', err);
   }
