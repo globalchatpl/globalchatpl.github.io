@@ -118,7 +118,7 @@ async function sendMessage() {
   const avatar = avatarDataUrl;
 
   // Blokada zastrzeżonego nicku
-  if (nick.toUpperCase().includes('GLOBALCHATPL')) {
+  if (nick.toUpperCase().includes('GLOBALCHATPL ✓')) {
     alert('Nie możesz używać zastrzeżonego nicku GLOBALCHATPL ✓');
     return;
   }
