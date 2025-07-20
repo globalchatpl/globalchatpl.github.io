@@ -1,55 +1,82 @@
-const apiUrl = 'https://globalchatplbackend.onrender.com/messages';
+const API = 'https://globalchatplbackend.onrender.com';
 
-let lastSentTime = 0;
+let nick = '';
+let color = '#1e40af';
+let lastSent = 0;
 
-const nickInput = document.getElementById('nick');
-const colorInput = document.getElementById('color');
+const loginNick = document.getElementById('login-nick');
+const loginPass = document.getElementById('login-password');
+const loginBtn = document.getElementById('loginBtn');
 const messageInput = document.getElementById('message');
+const colorInput = document.getElementById('color');
 const sendBtn = document.getElementById('sendBtn');
 const messagesDiv = document.getElementById('messages');
+const loginArea = document.querySelector('.login-area');
+const chatArea = document.getElementById('chat');
 
-sendBtn.onclick = async () => {
-  const nick = nickInput.value.trim();
-  const text = messageInput.value.trim();
-  const color = colorInput.value;
+loginBtn.onclick = async () => {
+  const n = loginNick.value.trim();
+  const p = loginPass.value.trim();
 
-  if (!nick || !text) {
-    alert('Wpisz nick i wiadomość!');
-    return;
-  }
-
-  const now = Date.now();
-  if (now - lastSentTime < 3000) {
-    alert('Poczekaj 3 sekundy przed kolejną wiadomością');
-    return;
-  }
+  if (!n || !p) return alert('Podaj nick i hasło');
 
   try {
-    await fetch(apiUrl, {
+    const res = await fetch(`${API}/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nick: n, password: p })
+    });
+
+    const data = await res.json();
+    if (!res.ok) return alert(data.error || 'Błąd logowania');
+
+    nick = n;
+    color = colorInput.value;
+    loginArea.style.display = 'none';
+    chatArea.style.display = 'flex';
+    loadMessages();
+  } catch (err) {
+    alert('Błąd połączenia z serwerem');
+  }
+};
+
+sendBtn.onclick = async () => {
+  const text = messageInput.value.trim();
+  if (!text) return;
+
+  const now = Date.now();
+  if (now - lastSent < 3000) return alert('Poczekaj 3 sekundy');
+
+  try {
+    const res = await fetch(`${API}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nick, text, color })
     });
 
+    if (!res.ok) {
+      const data = await res.json();
+      return alert(data.error || 'Błąd');
+    }
+
     messageInput.value = '';
-    lastSentTime = now;
+    lastSent = now;
     loadMessages();
   } catch (err) {
-    alert('Błąd przy wysyłaniu wiadomości');
     console.error(err);
   }
 };
 
 async function loadMessages() {
   try {
-    const res = await fetch(apiUrl);
+    const res = await fetch(`${API}/messages`);
     const data = await res.json();
     messagesDiv.innerHTML = data.map(msg =>
-      `<p><strong style="color: ${escapeHtml(msg.color || '#1e40af')}">${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
+      `<p><strong style="color: ${escapeHtml(msg.color || '#000')}">${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
     ).join('');
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (err) {
-    console.error('Błąd przy pobieraniu wiadomości', err);
+    console.error('Błąd pobierania wiadomości');
   }
 }
 
@@ -60,4 +87,3 @@ function escapeHtml(text) {
 }
 
 setInterval(loadMessages, 3000);
-loadMessages();
