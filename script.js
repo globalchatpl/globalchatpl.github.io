@@ -1,4 +1,5 @@
-const apiUrl = 'https://globalchatplbackend.onrender.com'; // ← Zmień na swój backend!
+const apiUrl = 'https://globalchatplbackend.onrender.com/messages';
+
 let lastSentTime = 0;
 
 const nickInput = document.getElementById('nick');
@@ -27,6 +28,7 @@ sendBtn.onclick = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nick, text })
     });
+
     messageInput.value = '';
     lastSentTime = now;
     loadMessages();
@@ -41,11 +43,17 @@ async function loadMessages() {
     const res = await fetch(apiUrl);
     const data = await res.json();
     messagesDiv.innerHTML = data.map(msg =>
-      `<p><strong>${msg.nick}:</strong> ${msg.text}</p>`
+      `<p><strong>${escapeHtml(msg.nick)}:</strong> ${escapeHtml(msg.text)}</p>`
     ).join('');
   } catch (err) {
     console.error('Błąd przy pobieraniu wiadomości', err);
   }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 setInterval(loadMessages, 3000);
