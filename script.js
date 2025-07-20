@@ -9,37 +9,46 @@ const avatarInput = document.getElementById('avatar');
 
 let avatarDataUrl = null;
 
+// Obsługa avatara
 avatarInput.addEventListener('change', () => {
   const file = avatarInput.files[0];
-  if (!file) {
-    avatarDataUrl = null;
-    return;
+  avatarDataUrl = null;
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => { avatarDataUrl = reader.result; };
+    reader.readAsDataURL(file);
   }
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    avatarDataUrl = reader.result;
-  };
-  reader.readAsDataURL(file);
 });
 
 function createMessageElement(msg) {
   const div = document.createElement('div');
   div.classList.add('msg');
 
-  if (msg.isOwner) div.classList.add('owner');
-  if (msg.nick === 'GLOBALCHATPL ✓') div.classList.add('globalchat');
+  const isOwner = msg.isOwner;
+  const isGlobal = msg.nick === 'GLOBALCHATPL ✓';
+  const isSystem = isGlobal || msg.text.toLowerCase().includes('zbanowano');
 
-  // Avatar
+  if (isSystem) div.classList.add('system');
+
   const img = document.createElement('img');
-  img.src = msg.avatar || 'https://i.imgur.com/xaJxH9d.png'; // avatar defaultowy
-  img.alt = "Avatar";
+  img.src = msg.avatar || `https://i.pravatar.cc/40?u=${encodeURIComponent(msg.nick)}`;
+  img.alt = 'Avatar';
+  img.className = 'avatar';
+  if (isOwner || isGlobal) img.classList.add('owner-avatar');
   div.appendChild(img);
 
-  // Nick
-  const nickSpan = document.createElement('span');
-  nickSpan.classList.add('nick');
-  nickSpan.textContent = msg.nick + ": ";
+  const content = document.createElement('div');
+  content.className = 'content';
+
+  const nickSpan = document.createElement('div');
+  nickSpan.className = 'nick';
+  nickSpan.textContent = msg.nick;
+
+  if (isOwner) nickSpan.classList.add('owner');
+  if (isGlobal) {
+    nickSpan.classList.add('global');
+    nickSpan.innerHTML = `GLOBALCHATPL<span class="checkmark">✓</span>`;
+  }
 
   if (msg.color === 'gradient-green') {
     nickSpan.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
@@ -53,32 +62,29 @@ function createMessageElement(msg) {
     nickSpan.style.color = msg.color || '#1e40af';
   }
 
-  nickSpan.style.fontWeight = (msg.isOwner || msg.nick === 'GLOBALCHATPL ✓') ? 'bold' : 'normal';
-  div.appendChild(nickSpan);
+  content.appendChild(nickSpan);
 
-  // Text
-  const textSpan = document.createElement('span');
-  textSpan.classList.add('text');
+  const textSpan = document.createElement('div');
+  textSpan.className = 'text';
   textSpan.textContent = msg.text;
-  div.appendChild(textSpan);
+  content.appendChild(textSpan);
 
+  div.appendChild(content);
   return div;
 }
 
 async function fetchMessages() {
   try {
     const res = await fetch(`${BACKEND_URL}/messages`);
+    if (!res.ok) throw new Error(res.statusText);
     const data = await res.json();
-
     messagesDiv.innerHTML = '';
     data.forEach(msg => {
-      const el = createMessageElement(msg);
-      messagesDiv.appendChild(el);
+      messagesDiv.appendChild(createMessageElement(msg));
     });
-
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   } catch (err) {
-    console.error('Błąd podczas pobierania wiadomości:', err);
+    console.error('Pobieranie wiadomości:', err);
   }
 }
 
@@ -87,19 +93,21 @@ async function sendMessage() {
   if (!text) return;
 
   const nick = nickInput.value.trim() || 'Anonim';
-  const color = colorInput.value;
+  const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
+
+  console.log('Wysyłam:', { text, nick, color, avatar });
 
   try {
     const res = await fetch(`${BACKEND_URL}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, nick, color, avatar }),
+      body: JSON.stringify({ text, nick, color, avatar })
     });
-
     const data = await res.json();
     if (data.error) {
       alert('Błąd: ' + data.error);
+      console.error(data.error);
     } else {
       messageInput.value = '';
       avatarInput.value = '';
@@ -107,12 +115,13 @@ async function sendMessage() {
       fetchMessages();
     }
   } catch (err) {
-    alert('Błąd wysyłania wiadomości');
+    console.error('Send error:', err);
+    alert('Błąd wysyłania');
   }
 }
 
 sendBtn.addEventListener('click', sendMessage);
-messageInput.addEventListener('keydown', (e) => {
+messageInput.addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     sendMessage();
