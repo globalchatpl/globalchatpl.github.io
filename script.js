@@ -113,17 +113,67 @@ async function sendMessage() {
     return;
   }
 
+  // Komendy logowania/rejestracji
+  if (text.startsWith('/login ')) {
+    const [_, username, password] = text.split(' ');
+    if (!username || !password) {
+      alert('Użycie: /login [nazwa] [hasło]');
+      return;
+    }
+    try {
+      const res = await fetch(`${BACKEND_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        alert('Zalogowano pomyślnie!');
+      } else {
+        alert('Błąd logowania: ' + (data.error || 'Nieznany błąd'));
+      }
+    } catch (err) {
+      console.error('Błąd logowania:', err);
+    }
+    messageInput.value = '';
+    return;
+  }
+
+  if (text.startsWith('/register ')) {
+    const [_, username, password] = text.split(' ');
+    if (!username || !password) {
+      alert('Użycie: /register [nazwa] [hasło]');
+      return;
+    }
+    try {
+      const res = await fetch(`${BACKEND_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('Zarejestrowano pomyślnie!');
+      } else {
+        alert('Błąd rejestracji: ' + (data.error || 'Nieznany błąd'));
+      }
+    } catch (err) {
+      console.error('Błąd rejestracji:', err);
+    }
+    messageInput.value = '';
+    return;
+  }
+
   const nick = nickInput.value.trim() || 'Anonim';
   const color = colorInput.value || '#1e40af';
   const avatar = avatarDataUrl;
 
-  // Blokada zastrzeżonego nicku
   if (nick.toUpperCase().includes('GLOBALCHATPL')) {
     alert('Nie możesz używać zastrzeżonego nicku GLOBALCHATPL ✓');
     return;
   }
 
-  // Blokada obraźliwych/zbanowanych fraz
   const bannedPhrases = [
     'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3',
     'jest tu ktoś z jpg?',
