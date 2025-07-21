@@ -6,6 +6,7 @@ const messageInput = document.getElementById('message');
 const nickInput = document.getElementById('nick');
 const colorInput = document.getElementById('color');
 const avatarInput = document.getElementById('avatar');
+const passwordInput = document.getElementById('password'); // Dodaj pole hasła w HTML!
 
 let avatarDataUrl = null;
 
@@ -31,7 +32,7 @@ function createMessageElement(msg) {
   div.classList.add('msg');
 
   const isOwner = msg.isOwner;
-  const isGlobal = msg.nick === 'GLOBALCHATPL ✓';
+  const isGlobal = msg.nick.startsWith('GLOBALCHATPL');
   const isSystem = isGlobal || (msg.text && msg.text.toLowerCase().includes('zbanowano'));
 
   if (isSystem) div.classList.add('system');
@@ -53,7 +54,10 @@ function createMessageElement(msg) {
   if (isOwner) nickSpan.classList.add('owner');
   if (isGlobal) {
     nickSpan.classList.add('global');
-    nickSpan.innerHTML = `GLOBALCHATPL<span class="checkmark">✓</span>`;
+    // Jeśli tag jest już w nicku, nie duplikuj
+    if (!msg.nick.includes('<span')) {
+      nickSpan.innerHTML = msg.nick.replace('GLOBALCHATPL', 'GLOBALCHATPL<span class="checkmark">✓</span>');
+    }
   }
 
   if (msg.color === 'gradient-green') {
@@ -113,67 +117,17 @@ async function sendMessage() {
     return;
   }
 
-  // Komendy logowania/rejestracji
-  if (text.startsWith('/login ')) {
-    const [_, username, password] = text.split(' ');
-    if (!username || !password) {
-      alert('Użycie: /login [nazwa] [hasło]');
-      return;
-    }
-    try {
-      const res = await fetch(`${BACKEND_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        alert('Zalogowano pomyślnie!');
-      } else {
-        alert('Błąd logowania: ' + (data.error || 'Nieznany błąd'));
-      }
-    } catch (err) {
-      console.error('Błąd logowania:', err);
-    }
-    messageInput.value = '';
-    return;
-  }
+  // Pobierz hasło z inputa (może być puste)
+  const password = passwordInput ? passwordInput.value.trim() : '';
 
-  if (text.startsWith('/register ')) {
-    const [_, username, password] = text.split(' ');
-    if (!username || !password) {
-      alert('Użycie: /register [nazwa] [hasło]');
-      return;
-    }
-    try {
-      const res = await fetch(`${BACKEND_URL}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert('Zarejestrowano pomyślnie!');
-      } else {
-        alert('Błąd rejestracji: ' + (data.error || 'Nieznany błąd'));
-      }
-    } catch (err) {
-      console.error('Błąd rejestracji:', err);
-    }
-    messageInput.value = '';
-    return;
-  }
-
+  // Nie używaj zastrzeżonych nicków
   const nick = nickInput.value.trim() || 'Anonim';
-  const color = colorInput.value || '#1e40af';
-  const avatar = avatarDataUrl;
-
   if (nick.toUpperCase().includes('GLOBALCHATPL')) {
     alert('Nie możesz używać zastrzeżonego nicku GLOBALCHATPL ✓');
     return;
   }
 
+  // Sprawdź zakazane frazy
   const bannedPhrases = [
     'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3',
     'jest tu ktoś z jpg?',
@@ -185,11 +139,14 @@ async function sendMessage() {
     }
   }
 
+  const color = colorInput.value || '#1e40af';
+  const avatar = avatarDataUrl || '';
+
   try {
     const res = await fetch(`${BACKEND_URL}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, nick, color, avatar })
+      body: JSON.stringify({ text, nick, color, avatar, password })
     });
     const data = await res.json();
     if (data.error) {
@@ -197,6 +154,7 @@ async function sendMessage() {
     } else {
       messageInput.value = '';
       avatarInput.value = '';
+      if(passwordInput) passwordInput.value = '';
       avatarDataUrl = null;
       fetchMessages();
     }
@@ -206,19 +164,8 @@ async function sendMessage() {
   }
 }
 
-// Automatyczna wiadomość co 10 minut
-setInterval(() => {
-  fetch(`${BACKEND_URL}/send`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      text: 'Dziękujemy że korzystasz z GlobalChat 💬',
-      nick: 'GLOBALCHATPL ✓',
-      color: 'gradient-green',
-      avatar: ''
-    })
-  });
-}, 600000); // 10 minut
+// Automatyczna wiadomość co 10 minut wysyłana backendem - tutaj możesz usunąć ten setInterval, bo masz go na backendzie.
+// Jeśli chcesz zostawić, to możesz zmienić nick i parametry.
 
 sendBtn.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', e => {
