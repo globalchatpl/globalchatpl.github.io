@@ -32,7 +32,7 @@ function createMessageElement(msg) {
 
   const isOwner = msg.isOwner;
   const isGlobal = msg.nick === 'GLOBALCHATPL ✓';
-  const isSystem = isGlobal || msg.text.toLowerCase().includes('zbanowano');
+  const isSystem = isGlobal || (msg.text && msg.text.toLowerCase().includes('zbanowano'));
 
   if (isSystem) div.classList.add('system');
 
@@ -123,14 +123,16 @@ async function sendMessage() {
     return;
   }
 
-  // Blokada obraźliwej/zbanowanej frazy
-  const bannedPhrase = [
-'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3',
-'jest tu ktoś z jpg?',
-];
-  if (text.toLowerCase().includes(bannedPhrase)) {
-    alert('Treść wiadomości zawiera zakazaną frazę.');
-    return;
+  // Blokada obraźliwych/zbanowanych fraz
+  const bannedPhrases = [
+    'darmowa dziecia pornografia! jebac kostka hacked by ususzony <3<3<3',
+    'jest tu ktoś z jpg?',
+  ];
+  for (const phrase of bannedPhrases) {
+    if (text.toLowerCase().includes(phrase)) {
+      alert('Treść wiadomości zawiera zakazaną frazę.');
+      return;
+    }
   }
 
   try {
